@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "https://themoviesocial-a63e6cbb1f61.herokuapp.com",
-  "homepage": "http://myapp.local",
+  "homepage": "https://myapp.local",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
