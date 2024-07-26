@@ -19,7 +19,7 @@ const ProfilePage = () => {
     } else {
       const fetchUserDetails = async () => {
         try {
-          const response = await axios.post('https://socialmoviebackend-4584a07ae955.herokuapp.com/api/userAccount', {
+          const response = await axios.post('http://socialmoviebackend-4584a07ae955.herokuapp.com/api/userAccount', {
             userID: userId,
           });
 
@@ -59,7 +59,7 @@ const ProfilePage = () => {
   const confirmLeaveGroup = async (confirmed) => {
     if (confirmed && partyID) {
       try {
-        const response = await axios.post('https://socialmoviebackend-4584a07ae955.herokuapp.com/api/leaveParty', {
+        const response = await axios.post('http://socialmoviebackend-4584a07ae955.herokuapp.com/api/leaveParty', {
           userID: userId,
           partyID,
         });

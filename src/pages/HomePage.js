@@ -19,7 +19,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchGroupData = async () => {
       try {
-        const response = await axios.get(`https://socialmoviebackend-4584a07ae955.herokuapp.com/api/getPartyMembers`, {
+        const response = await axios.get(`http://socialmoviebackend-4584a07ae955.herokuapp.com/api/getPartyMembers`, {
           params: { partyID, userID },
           withCredentials: true,
         });
