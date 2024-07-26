@@ -5,12 +5,10 @@ import './styles/JoinPage.css';
 
 const app_name = 'socialmoviebackend-4584a07ae955'; // Define the app_name
 
-function buildPath(route){
-  if (process.env.NODE_ENV === 'production'){
+function buildPath(route) {
+  if (process.env.NODE_ENV === 'production') {
     return 'https://' + app_name + '.herokuapp.com/' + route;
-  }
-  else
-  {
+  } else {
     return 'http://localhost:5000/' + route;
   }
 }
@@ -46,9 +44,9 @@ const JoinPage = () => {
     try {
       const response = await axios.post(buildPath('api/party/joinParty'), {
         partyInviteCode,
-        userID: userId 
+        userID: userId,
       }, {
-        withCredentials: true 
+        withCredentials: true,
       });
 
       const result = response.data;
@@ -59,26 +57,26 @@ const JoinPage = () => {
         } else {
           setMessage(`Successfully joined the party! Party ID: ${result.partyID}`);
           const pollResponse = await axios.post(buildPath('api/poll/startPoll'), {
-            partyID: result.partyID
+            partyID: result.partyID,
           });
 
           const pollData = pollResponse.data;
           if (pollResponse.status === 200) {
             localStorage.setItem('pollID', pollData.pollID);
             setMessage('Poll started successfully!');
-            navigate('/profile');
+            navigate('/home'); // Redirect to home page after starting poll
           } else {
             setMessage(`Error creating poll: ${pollData.error || 'Unknown error'}`);
           }
         }
       } else {
-        setMessage(`Error: ${result.message || result.error}`);
+        setMessage(result.message || 'Unknown error occurred');
       }
     } catch (error) {
-      setMessage(`Error: ${error.response?.data?.message || error.message}`);
+      setMessage(error.response?.data?.message || 'Server error. Please try again later.');
     }
   };
-  
+
   return (
     <div className="container">
       <div id="joinDiv">

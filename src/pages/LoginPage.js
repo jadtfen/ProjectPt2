@@ -8,8 +8,8 @@ function LoginPage() {
   const [loginPassword, setLoginPassword] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
-  const app_name = 'socialmoviebackend'
-  
+  const app_name = 'socialmoviebackend';
+
   function buildPath(route){
     if (process.env.NODE_ENV === 'production'){
       return 'https://' + app_name + '.herokuapp.com/' + route;
@@ -23,7 +23,7 @@ function LoginPage() {
   const doLogin = async (email, password) => {
     console.log('Logging in with:', email, password);
     try {
-      const response = await axios.post('https://socialmoviebackend-4584a07ae955.herokuapp.com/api/auth/login', {
+      const response = await axios.post(buildPath('api/auth/login'), {
         email,
         password
       }, {
@@ -40,7 +40,7 @@ function LoginPage() {
       }
     } catch (error) {
       console.error('Login error:', error);
-      setMessage('Login failed. Please try again later.');
+      setMessage(error.response?.data?.message || 'Login failed. Please try again later.');
     }
   };
 
