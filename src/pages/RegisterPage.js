@@ -3,6 +3,18 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './styles/Register.css';
 
+const app_name = 'socialmoviebackend-4584a07ae955'; // Define the app_name
+
+function buildPath(route){
+  if (process.env.NODE_ENV === 'production'){
+    return 'https://' + app_name + '.herokuapp.com/' + route;
+  }
+  else
+  {
+    return 'http://localhost:5000/' + route;
+  }
+}
+
 function RegisterPage() {
   const [registerUsername, setRegisterUsername] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
@@ -10,20 +22,10 @@ function RegisterPage() {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  function buildPath(route){
-    if (process.env.NODE_ENV === 'production'){
-      return 'https://' + app_name + '.herokuapp.com/' + route;
-    }
-    else
-    {
-      return 'http://localhost:5000/' + route;
-    }
-  }
-
   const register = async (email, name, password) => {
     try {
       const response = await axios.post(
-        'https://socialmoviebackend-4584a07ae955.herokuapp.com/api/auth/register',
+        buildPath('api/auth/register'),
         { email, name, password },
         {
           headers: { 'Content-Type': 'application/json' },

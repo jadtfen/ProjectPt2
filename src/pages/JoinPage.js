@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './styles/JoinPage.css';
 
+const app_name = 'socialmoviebackend-4584a07ae955'; // Define the app_name
+
 function buildPath(route){
   if (process.env.NODE_ENV === 'production'){
     return 'https://' + app_name + '.herokuapp.com/' + route;
@@ -23,7 +25,6 @@ const JoinPage = () => {
     return new URLSearchParams(useLocation().search);
   };
 
-
   const query = useQuery();
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const JoinPage = () => {
   const handleJoinParty = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('https://socialmoviebackend-4584a07ae955.herokuapp.com/api/party/joinParty', {
+      const response = await axios.post(buildPath('api/party/joinParty'), {
         partyInviteCode,
         userID: userId 
       }, {
@@ -57,7 +58,7 @@ const JoinPage = () => {
           navigate('/home');
         } else {
           setMessage(`Successfully joined the party! Party ID: ${result.partyID}`);
-          const pollResponse = await axios.post('https://socialmoviebackend-4584a07ae955.herokuapp.com/api/poll/startPoll', {
+          const pollResponse = await axios.post(buildPath('api/poll/startPoll'), {
             partyID: result.partyID
           });
 
