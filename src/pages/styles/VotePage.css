@@ -2,7 +2,7 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
-  background: #313338;
+  background: #313338; /* Grey background */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -97,4 +97,12 @@
 
 .current-page img {
   opacity: 0.6;
+}
+
+/* Ensure the body and html elements are fully covered with the grey background */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #313338; /* Grey background */
 }
