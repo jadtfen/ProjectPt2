@@ -1,107 +1,108 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './styles/Login.css';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './styles/JoinPage.css';
 
-function LoginPage() {
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const navigate = useNavigate();
-  const app_name = 'socialmoviebackend-4584a07ae955';
+const app_name = 'socialmoviebackend-4584a07ae955';
 
-  function buildPath(route) {
-    if (process.env.NODE_ENV === 'production') {
-      return 'http://' + app_name + '.herokuapp.com/' + route;
-    } else {
-      return 'http://localhost:5000/' + route;
-    }
+function buildPath(route) {
+  if (process.env.NODE_ENV === 'production') {
+    return 'http://' + app_name + '.herokuapp.com/' + route;
+  } else {
+    return 'http://localhost:5000/' + route;
   }
+}
 
-  const doLogin = async (email, password) => {
-    console.log('Logging in with:', email, password);
-    try {
-      const response = await fetch(buildPath('api/auth/login'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Include credentials in the request
-        body: JSON.stringify({ email, password }),
-      });
+const JoinPage = () => {
+  const [partyInviteCode, setPartyInviteCode] = useState('');
+  const [message, setMessage] = useState('');
+  const [userId, setUserId] = useState('');
+  const navigate = useNavigate();
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setMessage(errorData.message || 'Login failed. Please check your email and password.');
-        return;
-      }
-
-      const data = await response.json();
-      console.log('Login response:', data);
-
-      if (data.userId) {
-        localStorage.setItem('userId', data.userId); // Store user ID
-        navigate('/join'); // Redirect to another page
-      } else {
-        setMessage(data.message || 'Login failed. Please check your email and password.');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      setMessage('Login failed. Please try again later.');
-    }
+  const useQuery = () => {
+    return new URLSearchParams(useLocation().search);
   };
 
-  const handleLogin = (event) => {
-    event.preventDefault();
-    if (loginEmail && loginPassword) {
-      doLogin(loginEmail, loginPassword);
+  const query = useQuery();
+
+  useEffect(() => {
+    const code = query.get('code');
+    if (code) {
+      setPartyInviteCode(code);
+    }
+
+    const storedUserId = localStorage.getItem('userID');
+    if (storedUserId) {
+      setUserId(storedUserId);
     } else {
-      setMessage('Both email and password are required.');
+      setMessage('User ID not found. Please log in.');
+    }
+  }, [query]);
+
+  const handleJoinParty = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await axios.post(buildPath('api/party/joinParty'), {
+        partyInviteCode,
+        userID: userId,
+      }, {
+        withCredentials: true,
+      });
+
+      const result = response.data;
+
+      if (response.status === 200) {
+        if (result.userAlreadyInParty) {
+          navigate('/home');
+        } else {
+          setMessage(`Successfully joined the party! Party ID: ${result.partyID}`);
+          const pollResponse = await axios.post(buildPath('api/poll/startPoll'), {
+            partyID: result.partyID,
+          });
+
+          const pollData = pollResponse.data;
+          if (pollResponse.status === 200) {
+            localStorage.setItem('pollID', pollData.pollID);
+            setMessage('Poll started successfully!');
+            navigate('/home'); 
+          } else {
+            setMessage(`Error creating poll: ${pollData.error || 'Unknown error'}`);
+          }
+        }
+      } else {
+        setMessage(result.message || 'Unknown error occurred');
+      }
+    } catch (error) {
+      setMessage(error.response?.data?.message || 'Server error. Please try again later.');
     }
   };
 
   return (
     <div className="container">
-      <div id="loginDiv">
-        <form onSubmit={handleLogin}>
-          <span id="inner-title">PLEASE LOGIN</span>
-          <br />
+      <div id="joinDiv">
+        <form onSubmit={handleJoinParty}>
+          <span id="inner-title">JOIN PARTY</span><br />
           <input
-            type="email"
-            id="loginEmail"
-            placeholder="Email"
-            value={loginEmail}
-            onChange={(e) => setLoginEmail(e.target.value)}
+            type="text"
+            className="inputField"
+            value={partyInviteCode}
+            onChange={(e) => setPartyInviteCode(e.target.value)}
+            placeholder="Party Invite Code"
             required
-          />
-          <br />
-          <input
-            type="password"
-            id="loginPassword"
-            placeholder="Password"
-            value={loginPassword}
-            onChange={(e) => setLoginPassword(e.target.value)}
-            required
-          />
-          <br />
+          /><br />
           <input
             type="submit"
-            id="loginButton"
-            className="buttons"
-            value="Submit"
+            id="joinButton"
+            value="Join Party"
           />
         </form>
-        {message && <span id="loginResult">{message}</span>}
-        <div>
-          <span>
-            If you don't have an account,{' '}
-            <a href="/register" id="signupLink">
-              Register
-            </a>
-          </span>
+        {message && <p id="joinResult">{message}</p>}
+        <div className="create-party">
+          <span>Don't have a party invite code? <a href="/createParty" id="createPartyLink">Create a Party</a></span>
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default LoginPage;
+export default JoinPage;
