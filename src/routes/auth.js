@@ -55,7 +55,7 @@ router.post('/register', async (req, res) => {
       from: '"largeproject " <joanndinzey@gmail.com>',
       to: email,
       subject: 'Email Verification',
-      text: `Hi! There, You have recently visited our website and entered your email. Please follow the given link to verify your email: http://socialmoviebackend-4584a07ae955.herokuapp.com/api/auth/verifyEmail/${emailToken} Thanks`,
+      text: `Hi! There, You have recently visited our website and entered your email. Please follow the given link to verify your email: https://socialmoviebackend-4584a07ae955.herokuapp.com/api/auth/verifyEmail/${emailToken} Thanks`,
     });
 
     res.status(201).json({ message: 'User registered successfully. Please check your email to verify your account.' });

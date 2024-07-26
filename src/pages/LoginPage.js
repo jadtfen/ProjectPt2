@@ -12,7 +12,7 @@ function LoginPage() {
 
   function buildPath(route){
     if (process.env.NODE_ENV === 'production'){
-      return 'http://' + app_name + '.herokuapp.com/' + route;
+      return 'https://' + app_name + '.herokuapp.com/' + route;
     }
     else
     {

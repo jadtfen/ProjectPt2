@@ -7,7 +7,7 @@ const app_name = 'socialmoviebackend-4584a07ae955';
 
 function buildPath(route) {
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + app_name + '.herokuapp.com/' + route;
+    return 'https://' + app_name + '.herokuapp.com/' + route;
   } else {
     return 'http://localhost:5000/' + route;
   }

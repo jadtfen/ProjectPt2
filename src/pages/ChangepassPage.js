@@ -29,7 +29,7 @@ const ChangePasswordPage = () => {
     }
 
     try {
-      const response = await axios.post('http://socialmoviebackend-4584a07ae955.herokuapp.com/api/changePassword', {
+      const response = await axios.post('https://socialmoviebackend-4584a07ae955.herokuapp.com/api/changePassword', {
         userId: userId, // Use actual user ID from local storage
         currentPassword,
         newPassword,

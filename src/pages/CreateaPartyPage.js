@@ -22,7 +22,7 @@ const CreateaPartyPage = () => {
 
   const createGroup = async (partyName) => {
     try {
-      const response = await axios.post('http://socialmoviebackend-4584a07ae955.herokuapp.com/api/party/create', {
+      const response = await axios.post('https://socialmoviebackend-4584a07ae955.herokuapp.com/api/party/create', {
         partyName,
       }, {
         withCredentials: true, 

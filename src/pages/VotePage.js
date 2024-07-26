@@ -10,7 +10,7 @@ const VotePage = () => {
     const fetchMovies = async () => {
       try {
         const response = await fetch(
-          'http://socialmoviebackend-4584a07ae955.herokuapp.com/api/poll/votePage',
+          'https://socialmoviebackend-4584a07ae955.herokuapp.com/api/poll/votePage',
           {
             method: 'GET',
             credentials: 'include',
@@ -39,7 +39,7 @@ const VotePage = () => {
   const handleUpvote = async (movieId) => {
     try {
       const response = await fetch(
-        'http://socialmoviebackend-4584a07ae955.herokuapp.com/api/poll/upvoteMovie',
+        'https://socialmoviebackend-4584a07ae955.herokuapp.com/api/poll/upvoteMovie',
         {
           method: 'POST',
           headers: {

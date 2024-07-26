@@ -14,7 +14,7 @@ const SearchPage = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch('http://socialmoviebackend-4584a07ae955.herokuapp.com/api/displayMovies', {
+        const response = await fetch('https://socialmoviebackend-4584a07ae955.herokuapp.com/api/displayMovies', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ const SearchPage = () => {
       setShowingAllMovies(true);
     } else {
       try {
-        const response = await fetch('http://socialmoviebackend-4584a07ae955.herokuapp.com/api/searchMovie', {
+        const response = await fetch('https://socialmoviebackend-4584a07ae955.herokuapp.com/api/searchMovie', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ const SearchPage = () => {
     }
   
     try {
-      const response = await fetch('http://socialmoviebackend-4584a07ae955.herokuapp.com/poll/addMovieToPoll', {
+      const response = await fetch('https://socialmoviebackend-4584a07ae955.herokuapp.com/poll/addMovieToPoll', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

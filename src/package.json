@@ -2,7 +2,7 @@
   "name": "frontend_web",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://themoviesocial-a63e6cbb1f61.herokuapp.com",
+  "proxy": "https://themoviesocial-a63e6cbb1f61.herokuapp.com",
   "homepage": "http://myapp.local",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
