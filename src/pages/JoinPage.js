@@ -1,108 +1,107 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import './styles/JoinPage.css';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './styles/Login.css';
 
-const app_name = 'socialmoviebackend-4584a07ae955';
-
-function buildPath(route) {
-  if (process.env.NODE_ENV === 'production') {
-    return 'https://' + app_name + '.herokuapp.com/' + route;
-  } else {
-    return 'http://localhost:5000/' + route;
-  }
-}
-
-const JoinPage = () => {
-  const [partyInviteCode, setPartyInviteCode] = useState('');
+function LoginPage() {
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [userId, setUserId] = useState('');
   const navigate = useNavigate();
+  const app_name = 'socialmoviebackend-4584a07ae955';
 
-  const useQuery = () => {
-    return new URLSearchParams(useLocation().search);
-  };
-
-  const query = useQuery();
-
-  useEffect(() => {
-    const code = query.get('code');
-    if (code) {
-      setPartyInviteCode(code);
-    }
-
-    const storedUserId = localStorage.getItem('userID');
-    if (storedUserId) {
-      setUserId(storedUserId);
+  function buildPath(route) {
+    if (process.env.NODE_ENV === 'production') {
+      return 'https://' + app_name + '.herokuapp.com/' + route;
     } else {
-      setMessage('User ID not found. Please log in.');
+      return 'http://localhost:5000/' + route;
     }
-  }, [query]);
+  }
 
-  const handleJoinParty = async (event) => {
-    event.preventDefault();
+  const doLogin = async (email, password) => {
+    console.log('Logging in with:', email, password);
     try {
-      const response = await axios.post(buildPath('api/party/joinParty'), {
-        partyInviteCode,
-        userID: userId,
-      }, {
-        withCredentials: true,
+      const response = await fetch(buildPath('api/auth/login'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include credentials in the request
+        body: JSON.stringify({ email, password }),
       });
 
-      const result = response.data;
+      if (!response.ok) {
+        const errorData = await response.json();
+        setMessage(errorData.message || 'Login failed. Please check your email and password.');
+        return;
+      }
 
-      if (response.status === 200) {
-        if (result.userAlreadyInParty) {
-          navigate('/home');
-        } else {
-          setMessage(`Successfully joined the party! Party ID: ${result.partyID}`);
-          const pollResponse = await axios.post(buildPath('api/poll/startPoll'), {
-            partyID: result.partyID,
-          });
+      const data = await response.json();
+      console.log('Login response:', data);
 
-          const pollData = pollResponse.data;
-          if (pollResponse.status === 200) {
-            localStorage.setItem('pollID', pollData.pollID);
-            setMessage('Poll started successfully!');
-            navigate('/home'); 
-          } else {
-            setMessage(`Error creating poll: ${pollData.error || 'Unknown error'}`);
-          }
-        }
+      if (data.userId) {
+        localStorage.setItem('userId', data.userId); // Store user ID
+        navigate('/join'); // Redirect to another page
       } else {
-        setMessage(result.message || 'Unknown error occurred');
+        setMessage(data.message || 'Login failed. Please check your email and password.');
       }
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Server error. Please try again later.');
+      console.error('Login error:', error);
+      setMessage('Login failed. Please try again later.');
+    }
+  };
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+    if (loginEmail && loginPassword) {
+      doLogin(loginEmail, loginPassword);
+    } else {
+      setMessage('Both email and password are required.');
     }
   };
 
   return (
     <div className="container">
-      <div id="joinDiv">
-        <form onSubmit={handleJoinParty}>
-          <span id="inner-title">JOIN PARTY</span><br />
+      <div id="loginDiv">
+        <form onSubmit={handleLogin}>
+          <span id="inner-title">PLEASE LOGIN</span>
+          <br />
           <input
-            type="text"
-            className="inputField"
-            value={partyInviteCode}
-            onChange={(e) => setPartyInviteCode(e.target.value)}
-            placeholder="Party Invite Code"
+            type="email"
+            id="loginEmail"
+            placeholder="Email"
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)}
             required
-          /><br />
+          />
+          <br />
+          <input
+            type="password"
+            id="loginPassword"
+            placeholder="Password"
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+            required
+          />
+          <br />
           <input
             type="submit"
-            id="joinButton"
-            value="Join Party"
+            id="loginButton"
+            className="buttons"
+            value="Submit"
           />
         </form>
-        {message && <p id="joinResult">{message}</p>}
-        <div className="create-party">
-          <span>Don't have a party invite code? <a href="/createParty" id="createPartyLink">Create a Party</a></span>
+        {message && <span id="loginResult">{message}</span>}
+        <div>
+          <span>
+            If you don't have an account,{' '}
+            <a href="/register" id="signupLink">
+              Register
+            </a>
+          </span>
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default JoinPage;
+export default LoginPage;
