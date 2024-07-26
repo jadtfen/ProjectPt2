@@ -33,7 +33,7 @@ function RegisterPage() {
         }
       );
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         setMessage('Registration successful. Please check your email to verify your account.');
         navigate('/wait');
       } else {
