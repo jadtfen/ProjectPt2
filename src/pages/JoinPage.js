@@ -28,19 +28,24 @@ const JoinPage = () => {
   useEffect(() => {
     const code = query.get('code');
     if (code) {
+      console.log('Party invite code from URL:', code);
       setPartyInviteCode(code);
     }
 
     const storedUserId = localStorage.getItem('userID');
     if (storedUserId) {
+      console.log('Stored user ID:', storedUserId);
       setUserId(storedUserId);
     } else {
+      console.log('User ID not found. Please log in.');
       setMessage('User ID not found. Please log in.');
     }
   }, [query]);
 
   const handleJoinParty = async (event) => {
     event.preventDefault();
+    console.log('Attempting to join party with code:', partyInviteCode);
+    console.log('User ID:', userId);
     try {
       const response = await axios.post(buildPath('api/party/joinParty'), {
         partyInviteCode,
@@ -49,30 +54,40 @@ const JoinPage = () => {
         withCredentials: true,
       });
 
+      console.log('Join party response:', response);
+
       const result = response.data;
 
       if (response.status === 200) {
         if (result.userAlreadyInParty) {
+          console.log('User already in party. Navigating to home.');
           navigate('/home');
         } else {
+          console.log('Successfully joined the party! Party ID:', result.partyID);
           setMessage(`Successfully joined the party! Party ID: ${result.partyID}`);
           const pollResponse = await axios.post(buildPath('api/poll/startPoll'), {
             partyID: result.partyID,
           });
 
+          console.log('Start poll response:', pollResponse);
+
           const pollData = pollResponse.data;
           if (pollResponse.status === 200) {
+            console.log('Poll started successfully! Poll ID:', pollData.pollID);
             localStorage.setItem('pollID', pollData.pollID);
             setMessage('Poll started successfully!');
             navigate('/home'); 
           } else {
+            console.log('Error creating poll:', pollData.error || 'Unknown error');
             setMessage(`Error creating poll: ${pollData.error || 'Unknown error'}`);
           }
         }
       } else {
+        console.log('Error response:', result.message || 'Unknown error occurred');
         setMessage(result.message || 'Unknown error occurred');
       }
     } catch (error) {
+      console.error('Server error:', error);
       setMessage(error.response?.data?.message || 'Server error. Please try again later.');
     }
   };
