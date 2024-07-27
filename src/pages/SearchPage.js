@@ -37,6 +37,7 @@ const SearchPage = () => {
         console.log('Fetch movies response:', responseData);
 
         if (!response.ok) {
+          console.log('Response not OK, status:', response.status);
           const errorData = JSON.parse(responseData); // Parse error JSON
           throw new Error(errorData.message || 'Failed to fetch movies');
         }
@@ -74,6 +75,7 @@ const SearchPage = () => {
         console.log('Search response:', responseData);
 
         if (!response.ok) {
+          console.log('Response not OK, status:', response.status);
           const errorData = JSON.parse(responseData); // Parse error JSON
           throw new Error(errorData.message || 'Search request failed');
         }
