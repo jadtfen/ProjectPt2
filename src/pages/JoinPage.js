@@ -33,12 +33,11 @@ const JoinPage = () => {
     }
 
     const storedUserId = localStorage.getItem('userID');
-    if (storedUserId) {
+    if (storedUserId === null || storedUserId === undefined) {
+      setMessage('User ID not found. Please log in.');
+    } else {
       console.log('Stored user ID:', storedUserId);
       setUserId(storedUserId);
-    } else {
-      console.log('User ID not found. Please log in.');
-      setMessage('User ID not found. Please log in.');
     }
   }, [query]);
 
