@@ -24,6 +24,7 @@ const SearchPage = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
+        console.log('Fetching all movies...');
         const response = await fetch(buildPath('api/displayMovies'), {
           method: 'POST',
           headers: {
@@ -32,12 +33,15 @@ const SearchPage = () => {
           credentials: 'include',
         });
 
+        const responseData = await response.text(); // Get response as text
+        console.log('Fetch movies response:', responseData);
+
         if (!response.ok) {
-          const errorData = await response.json();
+          const errorData = JSON.parse(responseData); // Parse error JSON
           throw new Error(errorData.message || 'Failed to fetch movies');
         }
 
-        const data = await response.json();
+        const data = JSON.parse(responseData); // Parse successful JSON
         console.log('Fetched movies:', data);
         setAllMovies(data);
         setErrorMessage('');
@@ -56,6 +60,7 @@ const SearchPage = () => {
       setShowingAllMovies(true);
     } else {
       try {
+        console.log('Searching for movies with term:', searchTerm);
         const response = await fetch(buildPath('api/searchMovie'), {
           method: 'POST',
           headers: {
@@ -65,12 +70,15 @@ const SearchPage = () => {
           credentials: 'include',
         });
 
+        const responseData = await response.text(); // Get response as text
+        console.log('Search response:', responseData);
+
         if (!response.ok) {
-          const errorData = await response.json();
+          const errorData = JSON.parse(responseData); // Parse error JSON
           throw new Error(errorData.message || 'Search request failed');
         }
 
-        const data = await response.json();
+        const data = JSON.parse(responseData); // Parse successful JSON
         setAllMovies(data);
         setShowingAllMovies(false);
         setErrorMessage('');
@@ -97,6 +105,7 @@ const SearchPage = () => {
     }
 
     try {
+      console.log('Adding movie to poll with ID:', movieIDNumber);
       const response = await fetch(buildPath('api/poll/addMovieToPoll'), {
         method: 'POST',
         headers: {
@@ -106,10 +115,12 @@ const SearchPage = () => {
         credentials: 'include',
       });
 
-      const result = await response.json();
+      const result = await response.text(); // Get response as text
+      console.log('Add to poll response:', result);
 
       if (response.ok) {
-        console.log('Movie added to poll:', result);
+        const resultData = JSON.parse(result); // Parse successful JSON
+        console.log('Movie added to poll:', resultData);
 
         // Save movie to localStorage
         const existingMovies = JSON.parse(localStorage.getItem('pollMovies')) || [];
@@ -118,8 +129,9 @@ const SearchPage = () => {
           localStorage.setItem('pollMovies', JSON.stringify(existingMovies));
         }
       } else {
-        console.error('Error adding movie to poll:', result.error);
-        setErrorMessage(result.error || 'Failed to add movie to poll.');
+        const errorData = JSON.parse(result); // Parse error JSON
+        console.error('Error adding movie to poll:', errorData.error);
+        setErrorMessage(errorData.error || 'Failed to add movie to poll.');
       }
     } catch (error) {
       console.error('Fetch error:', error);
