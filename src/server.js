@@ -13,10 +13,6 @@ const app = express();
 
 // MongoDB connection
 const url = process.env.MONGO_URI_PARTY;
-const MongoClient = require('mongodb').MongoClient;
-const client = new MongoClient(url);
-client.connect();
-
 mongoose.set('strictQuery', true);
 mongoose.connect(url, {
   dbName: 'party-database',
@@ -68,21 +64,7 @@ app.use('/api/poll', pollRouter);
 
 app.set('port', process.env.PORT || 5000);
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'src', 'build')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'src', 'build'));
-  });
-}
-
-app.get('/', (req, res) => {
-  if (!req.session.views) {
-    req.session.views = 0;
-  }
-  req.session.views++;
-  res.send(`Number of views: ${req.session.views}`);
-});
-
+// Define API routes
 app.get('/api/check-session', (req, res) => {
   res.json(req.session);
 });
@@ -96,7 +78,7 @@ app.post('/api/displayMovies', async (req, res) => {
   }
 });
 
-app.get('/getPartyMembers', async (req, res) => {
+app.get('/api/getPartyMembers', async (req, res) => {
   const userID = req.session.userId;
   if (!userID) {
     return res.status(401).json({ message: 'Unauthorized' });
@@ -271,6 +253,19 @@ app.post('/api/resetPass', async (req, res) => {
     res.status(500).json({ error: e.toString() });
   }
 });
+
+// Catch-all route for undefined API endpoints
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ message: 'API route not found' });
+});
+
+// Serve React app for production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'src', 'build')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'src', 'build', 'index.html'));
+  });
+}
 
 app.listen(app.get('port'), () => {
   console.log(`Server is running on port ${app.get('port')}`);
