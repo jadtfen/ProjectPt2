@@ -57,6 +57,14 @@ const JoinPage = () => {
           setMessage(`Successfully joined the party! Party ID: ${result.partyID}`);
           setShowPopup(true); // Show popup
         }
+      } else if (response.status === 400) {
+        if (result.message === 'User not found' || result.message === 'Please verify your email first') {
+          console.log(result.message);
+          setMessage(result.message);
+        } else {
+          console.log('Party not found.');
+          setMessage('Party not found.');
+        }
       } else {
         console.log('Error response:', result.message || 'Unknown error occurred');
         setMessage(result.message || 'Unknown error occurred');
@@ -102,7 +110,6 @@ const JoinPage = () => {
           <div className="join-popup-overlay"></div>
           <div className="join-popup">
             <p>Successfully joined the party!</p>
-            <p>Party ID: <strong>{message}</strong></p>
             <button onClick={handleClosePopup}>OK</button>
           </div>
         </>
