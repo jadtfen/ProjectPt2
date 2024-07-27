@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 
+// Register User
 router.post('/register', async (req, res) => {
   const { email, name, password } = req.body;
 
@@ -45,7 +46,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Separate route to send verification email
+// Send Verification Email
 router.post('/sendVerificationEmail', async (req, res) => {
   const { email, userId } = req.body;
 
@@ -83,23 +84,26 @@ router.post('/sendVerificationEmail', async (req, res) => {
   }
 });
 
+// Verify Email
 router.get('/verifyEmail/:emailToken', async (req, res) => {
   const { emailToken } = req.params;
   try {
     const user = await User.findOne({ emailToken });
     if (!user) {
-      res.status(401).send('Email verification failed: Invalid Token');
+      return res.status(401).send('Email verification failed: Invalid Token');
     } else {
       user.emailVerifStatus = 1;
       user.emailToken = '';
       await user.save();
-      res.status(200).send('Email verified successfully');
+      return res.status(200).send('Email verified successfully');
     }
   } catch (e) {
-    res.status(500).send(e.toString());
+    console.error('Email verification error:', e);
+    return res.status(500).send(e.toString());
   }
 });
 
+// Login User
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -124,10 +128,12 @@ router.post('/login', async (req, res) => {
       res.status(200).json({ message: 'Login successful', userId: user._id });
     });
   } catch (err) {
+    console.error('Login error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
 
+// Check Session
 router.get('/check-session', (req, res) => {
   if (req.session.userId) {
     res.status(200).json({

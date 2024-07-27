@@ -36,6 +36,7 @@ function LoginPage() {
       if (response.status === 200 && response.data.userId) {
         console.log('Login successful');
         localStorage.setItem('userId', response.data.userId); // Store user ID
+        localStorage.setItem('token', response.data.token); // Store token if using JWT
         navigate('/join'); // Redirect to another page
       } else {
         console.log('Login failed:', response.data.message || 'Unknown error');
@@ -45,8 +46,10 @@ function LoginPage() {
       console.error('Login error:', error);
       if (error.response) {
         console.error('Error response data:', error.response.data);
+        setMessage(error.response.data.message);
+      } else {
+        setMessage('Login failed. Please try again later.');
       }
-      setMessage(error.response?.data?.message || 'Login failed. Please try again later.');
     }
   };
 
