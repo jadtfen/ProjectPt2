@@ -53,7 +53,6 @@ function LoginPage() {
 
   return (
     <div className="login-container">
-      <div id="welcomeHeader">Welcome</div>
       <div id="loginDiv">
         <form onSubmit={handleLogin}>
           <span id="inner-title">PLEASE LOGIN</span>
