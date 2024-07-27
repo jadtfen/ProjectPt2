@@ -38,14 +38,21 @@ const SearchPage = () => {
 
         if (!response.ok) {
           console.log('Response not OK, status:', response.status);
-          const errorData = JSON.parse(responseData); // Parse error JSON
-          throw new Error(errorData.message || 'Failed to fetch movies');
+          console.log('Response body:', responseData);
+          setErrorMessage('Failed to fetch movies. Please try again later.');
+          return;
         }
 
-        const data = JSON.parse(responseData); // Parse successful JSON
-        console.log('Fetched movies:', data);
-        setAllMovies(data);
-        setErrorMessage('');
+        try {
+          const data = JSON.parse(responseData); // Parse successful JSON
+          console.log('Fetched movies:', data);
+          setAllMovies(data);
+          setErrorMessage('');
+        } catch (e) {
+          console.error('Error parsing JSON:', e);
+          console.log('Response body was not JSON:', responseData);
+          setErrorMessage('Failed to fetch movies. Please try again later.');
+        }
       } catch (error) {
         console.error('Fetch movies error:', error);
         setErrorMessage('Failed to fetch movies. Please try again later.');
@@ -76,14 +83,23 @@ const SearchPage = () => {
 
         if (!response.ok) {
           console.log('Response not OK, status:', response.status);
-          const errorData = JSON.parse(responseData); // Parse error JSON
-          throw new Error(errorData.message || 'Search request failed');
+          console.log('Response body:', responseData);
+          setErrorMessage('Search failed. Please try again later.');
+          setShowingAllMovies(true);
+          return;
         }
 
-        const data = JSON.parse(responseData); // Parse successful JSON
-        setAllMovies(data);
-        setShowingAllMovies(false);
-        setErrorMessage('');
+        try {
+          const data = JSON.parse(responseData); // Parse successful JSON
+          setAllMovies(data);
+          setShowingAllMovies(false);
+          setErrorMessage('');
+        } catch (e) {
+          console.error('Error parsing JSON:', e);
+          console.log('Response body was not JSON:', responseData);
+          setErrorMessage('Search failed. Please try again later.');
+          setShowingAllMovies(true);
+        }
       } catch (error) {
         console.error('Search error:', error);
         setErrorMessage('Search failed. Please try again later.');
@@ -121,14 +137,20 @@ const SearchPage = () => {
       console.log('Add to poll response:', result);
 
       if (response.ok) {
-        const resultData = JSON.parse(result); // Parse successful JSON
-        console.log('Movie added to poll:', resultData);
+        try {
+          const resultData = JSON.parse(result); // Parse successful JSON
+          console.log('Movie added to poll:', resultData);
 
-        // Save movie to localStorage
-        const existingMovies = JSON.parse(localStorage.getItem('pollMovies')) || [];
-        if (!existingMovies.includes(movieIDNumber)) {
-          existingMovies.push(movieIDNumber);
-          localStorage.setItem('pollMovies', JSON.stringify(existingMovies));
+          // Save movie to localStorage
+          const existingMovies = JSON.parse(localStorage.getItem('pollMovies')) || [];
+          if (!existingMovies.includes(movieIDNumber)) {
+            existingMovies.push(movieIDNumber);
+            localStorage.setItem('pollMovies', JSON.stringify(existingMovies));
+          }
+        } catch (e) {
+          console.error('Error parsing JSON:', e);
+          console.log('Response body was not JSON:', result);
+          setErrorMessage('Failed to add movie to poll. Please try again later.');
         }
       } else {
         const errorData = JSON.parse(result); // Parse error JSON
