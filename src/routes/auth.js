@@ -113,25 +113,22 @@ router.post('/login', async (req, res) => {
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-
     if (user.emailVerifStatus === 0) {
       return res.status(401).json({ message: 'Email not verified' });
     }
+    // If everything is good, create a JWT token (if you use JWTs)
+    const token = jwt.sign({ userId: user._id }, 'your_jwt_secret'); // Replace 'your_jwt_secret' with your actual secret
 
-    // Set session
-    req.session.userId = user._id;
-    req.session.email = user.email;
-    req.session.save((err) => {
-      if (err) {
-        return res.status(500).json({ message: 'Session save error', error: err });
-      }
-      res.status(200).json({ message: 'Login successful', userId: user._id });
+    res.status(200).json({
+      userId: user._id,
+      token,
     });
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
 
 // Check Session
 router.get('/check-session', (req, res) => {
