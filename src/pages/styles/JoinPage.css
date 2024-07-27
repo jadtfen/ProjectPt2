@@ -1,4 +1,4 @@
-body.join-page {
+.join-container {
   background-color: #313338;
   display: flex;
   justify-content: center;
@@ -6,9 +6,6 @@ body.join-page {
   height: 100vh;
   margin: 0;
   font-family: 'Inter', sans-serif;
-}
-
-.join-container {
   text-align: center;
   color: #FFF3E8;
 }
@@ -20,17 +17,16 @@ body.join-page {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
-  margin-top: 40px;
 }
 
-#inner-title {
+.join-inner-heading {
   font-size: 24px;
   font-weight: bold;
   color: #FFF3E8;
   margin-bottom: 20px;
 }
 
-.inputField {
+.join-inputField {
   width: 100%;
   height: 50px;
   background-color: #F0F0F0;
@@ -42,7 +38,7 @@ body.join-page {
   box-sizing: border-box;
 }
 
-#joinButton {
+.join-buttons {
   width: 100%;
   height: 50px;
   background-color: #FFF3E8;
@@ -54,22 +50,43 @@ body.join-page {
   margin-top: 10px;
 }
 
-#joinButton:hover {
+.join-buttons:hover {
   background-color: #E0E0E0;
 }
 
-#joinResult {
+.join-message {
   color: #FFF3E8;
   font-size: 14px;
   margin-top: 10px;
 }
 
-a {
+.join-link {
   color: #FFD700;
   text-decoration: none;
 }
 
-#createPartyLink {
+.join-link:hover {
   text-decoration: underline;
-  color: #FFD700;
+}
+
+.join-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.join-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #FFF;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1000;
+  text-align: center;
 }

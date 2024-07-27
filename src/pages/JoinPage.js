@@ -102,7 +102,7 @@ const JoinPage = () => {
           <div className="join-popup-overlay"></div>
           <div className="join-popup">
             <p>Successfully joined the party!</p>
-            <p>Party ID: <strong>{partyInviteCode}</strong></p>
+            <p>Party ID: <strong>{message}</strong></p>
             <button onClick={handleClosePopup}>OK</button>
           </div>
         </>
