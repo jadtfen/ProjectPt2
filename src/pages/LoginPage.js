@@ -33,24 +33,27 @@ function LoginPage() {
         withCredentials: true // Include credentials in the request
       });
 
-      console.log('Login response:', response);
+      const responseText = await response.data;
 
-      if (response.status === 200 && response.data.userId) {
-        console.log('Login successful, userId:', response.data.userId);
-        localStorage.setItem('userId', response.data.userId); // Store user ID
+      console.log('Login response:', responseText);
+
+      if (response.status === 200 && responseText.userId) {
+        console.log('Login successful, userId:', responseText.userId);
+        localStorage.setItem('userId', responseText.userId); // Store user ID
         navigate('/join'); // Redirect to another page
       } else {
-        console.log('Login failed:', response.data.message || 'Unknown error');
-        setMessage(response.data.message || 'Login failed. Please check your email and password.');
+        console.log('Login failed:', responseText.message || 'Unknown error');
+        setMessage(responseText.message || 'Login failed. Please check your email and password.');
       }
     } catch (error) {
       console.error('Login error:', error);
 
       if (error.response) {
+        const errorResponseText = await error.response.data;
         console.error('Error response status:', error.response.status);
-        console.error('Error response data:', error.response.data);
-        setMessage(error.response.data.message || 'Login failed. Please check your email and password.');
-        setResponseData(error.response.data);
+        console.error('Error response data:', errorResponseText);
+        setMessage(errorResponseText.message || 'Login failed. Please check your email and password.');
+        setResponseData(errorResponseText);
       } else if (error.request) {
         console.error('Error request:', error.request);
         setMessage('Network error. Please check your internet connection.');
