@@ -3,20 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './styles/JoinPage.css';
 
-const app_name = 'socialmoviebackend-4584a07ae955';
-
-function buildPath(route) {
-  if (process.env.NODE_ENV === 'production') {
-    return 'https://' + app_name + '.herokuapp.com/' + route;
-  } else {
-    return 'http://localhost:5000/' + route;
-  }
-}
-
 const JoinPage = () => {
   const [partyInviteCode, setPartyInviteCode] = useState('');
   const [message, setMessage] = useState('');
   const [userId, setUserId] = useState('');
+  const [showPopup, setShowPopup] = useState(false); // State to show/hide popup
   const navigate = useNavigate();
 
   const useQuery = () => {
@@ -46,7 +37,7 @@ const JoinPage = () => {
     console.log('Attempting to join party with code:', partyInviteCode);
     console.log('User ID:', userId);
     try {
-      const response = await axios.post(buildPath('api/party/joinParty'), {
+      const response = await axios.post('https://socialmoviebackend-4584a07ae955.herokuapp.com/api/party/joinParty', {
         partyInviteCode,
         userID: userId,
       }, {
@@ -64,22 +55,7 @@ const JoinPage = () => {
         } else {
           console.log('Successfully joined the party! Party ID:', result.partyID);
           setMessage(`Successfully joined the party! Party ID: ${result.partyID}`);
-          const pollResponse = await axios.post(buildPath('api/poll/startPoll'), {
-            partyID: result.partyID,
-          });
-
-          console.log('Start poll response:', pollResponse);
-
-          const pollData = pollResponse.data;
-          if (pollResponse.status === 200) {
-            console.log('Poll started successfully! Poll ID:', pollData.pollID);
-            localStorage.setItem('pollID', pollData.pollID);
-            setMessage('Poll started successfully!');
-            navigate('/home'); 
-          } else {
-            console.log('Error creating poll:', pollData.error || 'Unknown error');
-            setMessage(`Error creating poll: ${pollData.error || 'Unknown error'}`);
-          }
+          setShowPopup(true); // Show popup
         }
       } else {
         console.log('Error response:', result.message || 'Unknown error occurred');
@@ -91,30 +67,46 @@ const JoinPage = () => {
     }
   };
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    navigate('/home');
+  };
+
   return (
     <div className="join-container">
       <div id="joinDiv">
+        <h1 className="join-inner-heading">Join a Party</h1>
         <form onSubmit={handleJoinParty}>
-          <span id="inner-title">JOIN PARTY</span><br />
           <input
             type="text"
-            className="inputField"
+            className="join-inputField"
             value={partyInviteCode}
             onChange={(e) => setPartyInviteCode(e.target.value)}
             placeholder="Party Invite Code"
             required
           /><br />
-          <input
-            type="submit"
-            id="joinButton"
-            value="Join Party"
-          />
+          <button type="submit" className="join-buttons">
+            Join Party
+          </button>
         </form>
-        {message && <p id="joinResult">{message}</p>}
-        <div className="create-party">
-          <span>Don't have a party invite code? <a href="/createParty" id="createPartyLink">Create a Party</a></span>
+        {message && <p className="join-message">{message}</p>}
+        <div>
+          <a href="/createParty" className="join-link">
+            Don't have a party invite code? Create a Party!
+          </a>
         </div>
       </div>
+
+      {showPopup && (
+        <>
+          <div className="join-popup-overlay"></div>
+          <div className="join-popup">
+            <p>Successfully joined the party!</p>
+            <p>Party ID: <strong>{partyInviteCode}</strong></p>
+            <button onClick={handleClosePopup}>OK</button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
