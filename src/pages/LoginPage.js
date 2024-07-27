@@ -20,10 +20,11 @@ function LoginPage() {
 
   const doLogin = async (email, password) => {
     console.log('Logging in with:', email, password);
-    console.log('API URL:', buildPath('api/auth/login'));
+    const apiUrl = buildPath('api/auth/login');
+    console.log('API URL:', apiUrl);
 
     try {
-      const response = await axios.post(buildPath('api/auth/login'), {
+      const response = await axios.post(apiUrl, {
         email,
         password
       }, {
@@ -34,7 +35,7 @@ function LoginPage() {
       console.log('Login response:', response);
 
       if (response.status === 200 && response.data.userId) {
-        console.log('Login successful');
+        console.log('Login successful, userId:', response.data.userId);
         localStorage.setItem('userId', response.data.userId); // Store user ID
         navigate('/join'); // Redirect to another page
       } else {
@@ -43,14 +44,16 @@ function LoginPage() {
       }
     } catch (error) {
       console.error('Login error:', error);
+
       if (error.response) {
+        console.error('Error response status:', error.response.status);
         console.error('Error response data:', error.response.data);
-        setMessage(error.response.data.message);
+        setMessage(error.response.data.message || 'Login failed. Please check your email and password.');
       } else if (error.request) {
-        console.error('Error request data:', error.request);
+        console.error('Error request:', error.request);
         setMessage('Network error. Please check your internet connection.');
       } else {
-        console.error('Error', error.message);
+        console.error('Error message:', error.message);
         setMessage('Login failed. Please try again later.');
       }
     }
@@ -58,9 +61,12 @@ function LoginPage() {
 
   const handleLogin = (event) => {
     event.preventDefault();
+    console.log('Login form submitted');
     if (loginEmail && loginPassword) {
+      console.log('Both email and password provided');
       doLogin(loginEmail, loginPassword);
     } else {
+      console.log('Email or password missing');
       setMessage('Both email and password are required.');
     }
   };
