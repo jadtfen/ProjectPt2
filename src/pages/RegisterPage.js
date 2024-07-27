@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './styles/Register.css';
 
-const app_name = 'socialmoviebackend-4584a07ae955'; 
+const app_name = 'socialmoviebackend-4584a07ae955'; // Define the app_name
 
 function buildPath(route) {
   if (process.env.NODE_ENV === 'production') {
@@ -40,8 +40,8 @@ function RegisterPage() {
 
       if (response.status === 201) {
         console.log('Registration successful');
-        setMessage('Registration successful. Please check your email to verify your account.');
-        navigate('/wait'); // Navigate to a waiting or confirmation page
+        const { userId } = response.data;
+        await sendVerificationEmail(email, userId);
       } else {
         console.log('Registration failed:', response.data.message || 'Unknown error');
         setMessage(`Registration failed: ${response.data.message || 'Unknown error'}`);
@@ -53,16 +53,45 @@ function RegisterPage() {
     }
   };
 
+  const sendVerificationEmail = async (email, userId) => {
+    try {
+      const response = await axios.post(
+        buildPath('api/auth/sendVerificationEmail'),
+        { email, userId },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        console.log('Verification email sent successfully');
+        setMessage('Registration successful. Please check your email to verify your account.');
+        navigate('/wait'); // Navigate to a waiting or confirmation page
+      } else {
+        console.log('Verification email sending failed:', response.data.message || 'Unknown error');
+        setMessage(`Verification email sending failed: ${response.data.message || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Verification email sending error:', error);
+      const errorMessage = error.response?.data?.message || 'Verification email sending failed: Unknown error';
+      setMessage(errorMessage);
+    }
+  };
+
+  const handleRegister = (event) => {
+    event.preventDefault();
+    if (registerEmail && registerUsername && registerPassword) {
+      register(registerEmail, registerUsername, registerPassword);
+    } else {
+      setMessage('All fields are required.');
+    }
+  };
+
   return (
     <div className="register-container">
       <div id="registerDiv">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            console.log('Form submitted');
-            register(registerEmail, registerUsername, registerPassword);
-          }}
-        >
+        <form onSubmit={handleRegister}>
           <span id="inner-title">REGISTER</span>
           <br />
           <input
@@ -105,7 +134,7 @@ function RegisterPage() {
             value="Register"
           />
         </form>
-        <span id="registerResult">{message}</span>
+        {message && <span id="registerResult">{message}</span>}
         <div>
           <span>
             If you already have an account, <Link to="/login">Login</Link>

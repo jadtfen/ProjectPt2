@@ -28,19 +28,37 @@ router.post('/register', async (req, res) => {
   }
 
   try {
-    const emailToken = jwt.sign({ email }, 'ourSecretKey', { expiresIn: '1h' });
     const hashedPassword = bcrypt.hashSync(password, 8);
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
       status: 0,
-      emailToken: emailToken,
       emailVerifStatus: 0,
     });
     await newUser.save();
 
-    // Send verification email
+    res.status(201).json({ message: 'User registered successfully. Please check your email to verify your account.', userId: newUser._id });
+  } catch (e) {
+    console.error('Registration error:', e);  // Log the error to the console
+    res.status(500).json({ message: 'Server error', error: e.toString() });
+  }
+});
+
+// Separate route to send verification email
+router.post('/sendVerificationEmail', async (req, res) => {
+  const { email, userId } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const emailToken = jwt.sign({ email }, 'ourSecretKey', { expiresIn: '1h' });
+    user.emailToken = emailToken;
+    await user.save();
+
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,
@@ -58,14 +76,13 @@ router.post('/register', async (req, res) => {
       text: `Hi! There, You have recently visited our website and entered your email. Please follow the given link to verify your email: https://socialmoviebackend-4584a07ae955.herokuapp.com/api/auth/verifyEmail/${emailToken} Thanks`,
     });
 
-    res.status(201).json({ message: 'User registered successfully. Please check your email to verify your account.' });
+    res.status(200).json({ message: 'Verification email sent successfully' });
   } catch (e) {
-    console.error('Registration error:', e);  // Log the error to the console
+    console.error('Email sending error:', e);  // Log the error to the console
     res.status(500).json({ message: 'Server error', error: e.toString() });
   }
 });
 
-// Verify Email
 router.get('/verifyEmail/:emailToken', async (req, res) => {
   const { emailToken } = req.params;
   try {
@@ -83,7 +100,6 @@ router.get('/verifyEmail/:emailToken', async (req, res) => {
   }
 });
 
-// Login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -112,7 +128,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Check Session
 router.get('/check-session', (req, res) => {
   if (req.session.userId) {
     res.status(200).json({
