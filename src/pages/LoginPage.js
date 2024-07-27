@@ -25,15 +25,18 @@ function LoginPage() {
         email,
         password
       }, {
+        headers: { 'Content-Type': 'application/json' },
         withCredentials: true // Include credentials in the request
       });
 
-      console.log('Login response:', response.data);
+      console.log('Login response:', response);
 
       if (response.status === 200 && response.data.userId) {
+        console.log('Login successful');
         localStorage.setItem('userId', response.data.userId); // Store user ID
         navigate('/join'); // Redirect to another page
       } else {
+        console.log('Login failed:', response.data.message || 'Unknown error');
         setMessage(response.data.message || 'Login failed. Please check your email and password.');
       }
     } catch (error) {
