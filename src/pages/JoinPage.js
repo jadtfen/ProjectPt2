@@ -23,11 +23,11 @@ const JoinPage = () => {
       setPartyInviteCode(code);
     }
 
-    const storedUserId = localStorage.getItem('userID');
+    const storedUserId = localStorage.getItem('userId');
+    console.log('Retrieved stored user ID:', storedUserId); // Added logging for stored user ID
     if (storedUserId === null || storedUserId === undefined) {
       setMessage('User ID not found. Please log in.');
     } else {
-      console.log('Stored user ID:', storedUserId);
       setUserId(storedUserId);
     }
   }, [query]);
