@@ -87,12 +87,11 @@ function RegisterPage() {
 
   const handleRegister = (event) => {
     event.preventDefault();
-    console.log('Register form submitted');
     if (registerEmail && registerUsername && registerPassword) {
-      console.log('All fields are filled');
+      console.log('All fields provided');
       register(registerEmail, registerUsername, registerPassword);
     } else {
-      console.log('Missing fields');
+      console.log('Missing required fields');
       setMessage('All fields are required.');
     }
   };
