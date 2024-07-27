@@ -104,9 +104,9 @@ router.get('/verifyEmail/:emailToken', async (req, res) => {
 });
 
 // Login User
+// Login route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const user = await User.findOne({ email });
 
@@ -130,7 +130,6 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
-
 // Check Session
 router.get('/check-session', (req, res) => {
   if (req.session.userId) {

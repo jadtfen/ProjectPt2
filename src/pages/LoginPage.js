@@ -33,13 +33,27 @@ function LoginPage() {
         withCredentials: true // Include credentials in the request
       });
 
-      setResponseData(response.data); // Store response data in state
+      const responseData = response.data;
+
+      console.log('Login response:', responseData);
+
+      if (response.status === 200 && responseData.userId) {
+        console.log('Login successful, userId:', responseData.userId);
+        localStorage.setItem('userId', responseData.userId); // Store user ID
+        navigate('/join'); // Redirect to another page
+      } else {
+        console.log('Login failed:', responseData.message || 'Unknown error');
+        setMessage(responseData.message || 'Login failed. Please check your email and password.');
+      }
     } catch (error) {
       console.error('Login error:', error);
 
       if (error.response) {
-        setResponseData(error.response.data); // Store error response data in state
-        setMessage(error.response.data.message || 'Login failed. Please check your email and password.');
+        const errorResponseData = error.response.data;
+        console.error('Error response status:', error.response.status);
+        console.error('Error response data:', errorResponseData);
+        setMessage(errorResponseData.message || 'Login failed. Please check your email and password.');
+        setResponseData(errorResponseData);
       } else if (error.request) {
         console.error('Error request:', error.request);
         setMessage('Network error. Please check your internet connection.');
@@ -52,17 +66,6 @@ function LoginPage() {
     }
   };
 
-  useEffect(() => {
-    if (responseData) {
-      console.log('Response data stored:', responseData);
-      if (responseData.userId) {
-        console.log('Login successful, userId:', responseData.userId);
-        localStorage.setItem('userId', responseData.userId); // Store user ID
-        navigate('/join'); // Redirect to another page
-      }
-    }
-  }, [responseData, navigate]);
-
   const handleLogin = (event) => {
     event.preventDefault();
     console.log('Login form submitted');
@@ -74,6 +77,12 @@ function LoginPage() {
       setMessage('Both email and password are required.');
     }
   };
+
+  useEffect(() => {
+    if (responseData) {
+      console.log('Response data stored:', responseData);
+    }
+  }, [responseData]);
 
   return (
     <div className="login-container">
