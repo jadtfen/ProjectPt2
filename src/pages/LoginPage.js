@@ -20,6 +20,8 @@ function LoginPage() {
 
   const doLogin = async (email, password) => {
     console.log('Logging in with:', email, password);
+    console.log('API URL:', buildPath('api/auth/login'));
+    
     try {
       const response = await axios.post(buildPath('api/auth/login'), {
         email,
@@ -41,6 +43,9 @@ function LoginPage() {
       }
     } catch (error) {
       console.error('Login error:', error);
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+      }
       setMessage(error.response?.data?.message || 'Login failed. Please try again later.');
     }
   };
