@@ -36,6 +36,12 @@ const JoinPage = () => {
     event.preventDefault();
     console.log('Attempting to join party with code:', partyInviteCode);
     console.log('User ID:', userId);
+
+    if (!userId) {
+      setMessage('User ID is required. Please log in.');
+      return;
+    }
+
     try {
       const response = await axios.post('https://socialmoviebackend-4584a07ae955.herokuapp.com/api/party/joinParty', {
         partyInviteCode,
@@ -52,6 +58,9 @@ const JoinPage = () => {
         if (result.userAlreadyInParty) {
           console.log('User already in party.');
           setMessage('User already in party.');
+        } else if (!result.partyID) {
+          console.log('Party ID is null or undefined. Please log in.');
+          setMessage('Party ID is null or undefined. Please log in.');
         } else {
           console.log('Successfully joined the party! Party ID:', result.partyID);
           setMessage(`Successfully joined the party! Party ID: ${result.partyID}`);
