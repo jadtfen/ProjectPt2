@@ -54,6 +54,10 @@ function RegisterPage() {
   };
 
   const sendVerificationEmail = async (email, userId) => {
+    console.log('Sending verification email');
+    console.log('Email:', email);
+    console.log('User ID:', userId);
+
     try {
       const response = await axios.post(
         buildPath('api/auth/sendVerificationEmail'),
@@ -63,6 +67,8 @@ function RegisterPage() {
           withCredentials: true,
         }
       );
+
+      console.log('Verification email response:', response);
 
       if (response.status === 200) {
         console.log('Verification email sent successfully');
@@ -81,9 +87,12 @@ function RegisterPage() {
 
   const handleRegister = (event) => {
     event.preventDefault();
+    console.log('Register form submitted');
     if (registerEmail && registerUsername && registerPassword) {
+      console.log('All fields are filled');
       register(registerEmail, registerUsername, registerPassword);
     } else {
+      console.log('Missing fields');
       setMessage('All fields are required.');
     }
   };

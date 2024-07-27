@@ -82,7 +82,10 @@ function LoginPage() {
             id="loginEmail"
             placeholder="Email"
             value={loginEmail}
-            onChange={(e) => setLoginEmail(e.target.value)}
+            onChange={(e) => {
+              console.log('Email input changed:', e.target.value);
+              setLoginEmail(e.target.value);
+            }}
             required
           />
           <br />
@@ -91,7 +94,10 @@ function LoginPage() {
             id="loginPassword"
             placeholder="Password"
             value={loginPassword}
-            onChange={(e) => setLoginPassword(e.target.value)}
+            onChange={(e) => {
+              console.log('Password input changed:', e.target.value);
+              setLoginPassword(e.target.value);
+            }}
             required
           />
           <br />
