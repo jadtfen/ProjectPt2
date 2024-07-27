@@ -142,9 +142,11 @@ router.post('/joinParty', async (req, res) => {
 
     res.status(200).json({ userAlreadyInParty: false, partyID: party._id });
   } catch (err) {
+    console.error('Error joining party:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 // Home Endpoint
 router.get('/home', async (req, res) => {
