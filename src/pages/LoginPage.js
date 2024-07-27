@@ -8,7 +8,7 @@ function LoginPage() {
   const [loginPassword, setLoginPassword] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
-  const app_name = 'socialmoviebackend-4584a07ae955h';
+  const app_name = 'socialmoviebackend-4584a07ae955';
 
   function buildPath(route) {
     if (process.env.NODE_ENV === 'production') {
@@ -21,7 +21,7 @@ function LoginPage() {
   const doLogin = async (email, password) => {
     console.log('Logging in with:', email, password);
     console.log('API URL:', buildPath('api/auth/login'));
-    
+
     try {
       const response = await axios.post(buildPath('api/auth/login'), {
         email,
@@ -36,7 +36,6 @@ function LoginPage() {
       if (response.status === 200 && response.data.userId) {
         console.log('Login successful');
         localStorage.setItem('userId', response.data.userId); // Store user ID
-        localStorage.setItem('token', response.data.token); // Store token if using JWT
         navigate('/join'); // Redirect to another page
       } else {
         console.log('Login failed:', response.data.message || 'Unknown error');
@@ -47,7 +46,11 @@ function LoginPage() {
       if (error.response) {
         console.error('Error response data:', error.response.data);
         setMessage(error.response.data.message);
+      } else if (error.request) {
+        console.error('Error request data:', error.request);
+        setMessage('Network error. Please check your internet connection.');
       } else {
+        console.error('Error', error.message);
         setMessage('Login failed. Please try again later.');
       }
     }
