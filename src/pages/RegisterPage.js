@@ -5,12 +5,10 @@ import './styles/Register.css';
 
 const app_name = 'socialmoviebackend-4584a07ae955'; // Define the app_name
 
-function buildPath(route){
-  if (process.env.NODE_ENV === 'production'){
+function buildPath(route) {
+  if (process.env.NODE_ENV === 'production') {
     return 'https://' + app_name + '.herokuapp.com/' + route;
-  }
-  else
-  {
+  } else {
     return 'http://localhost:5000/' + route;
   }
 }
@@ -33,9 +31,9 @@ function RegisterPage() {
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         setMessage('Registration successful. Please check your email to verify your account.');
-        navigate('/wait');
+        navigate('/wait'); // Navigate to a waiting or confirmation page
       } else {
         setMessage(`Registration failed: ${response.data.message || 'Unknown error'}`);
       }
