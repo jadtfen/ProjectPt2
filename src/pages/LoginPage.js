@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './styles/Login.css';
@@ -7,6 +7,7 @@ function LoginPage() {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [responseData, setResponseData] = useState('');
   const navigate = useNavigate();
   const app_name = 'socialmoviebackend-4584a07ae955';
 
@@ -49,12 +50,15 @@ function LoginPage() {
         console.error('Error response status:', error.response.status);
         console.error('Error response data:', error.response.data);
         setMessage(error.response.data.message || 'Login failed. Please check your email and password.');
+        setResponseData(error.response.data);
       } else if (error.request) {
         console.error('Error request:', error.request);
         setMessage('Network error. Please check your internet connection.');
+        setResponseData(error.request);
       } else {
         console.error('Error message:', error.message);
         setMessage('Login failed. Please try again later.');
+        setResponseData(error.message);
       }
     }
   };
@@ -70,6 +74,12 @@ function LoginPage() {
       setMessage('Both email and password are required.');
     }
   };
+
+  useEffect(() => {
+    if (responseData) {
+      console.log('Response data stored:', responseData);
+    }
+  }, [responseData]);
 
   return (
     <div className="login-container">
