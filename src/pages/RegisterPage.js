@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './styles/Register.css';
 
-const app_name = 'socialmoviebackend-4584a07ae955'; // Define the app_name
+const app_name = 'socialmoviebackend-4584a07ae955'; 
 
 function buildPath(route) {
   if (process.env.NODE_ENV === 'production') {

@@ -10,12 +10,10 @@ function LoginPage() {
   const navigate = useNavigate();
   const app_name = 'socialmoviebackend';
 
-  function buildPath(route){
-    if (process.env.NODE_ENV === 'production'){
+  function buildPath(route) {
+    if (process.env.NODE_ENV === 'production') {
       return 'https://' + app_name + '.herokuapp.com/' + route;
-    }
-    else
-    {
+    } else {
       return 'http://localhost:5000/' + route;
     }
   }
@@ -54,7 +52,8 @@ function LoginPage() {
   };
 
   return (
-    <div className="container">
+    <div className="login-container">
+      <div id="welcomeHeader">Welcome</div>
       <div id="loginDiv">
         <form onSubmit={handleLogin}>
           <span id="inner-title">PLEASE LOGIN</span>
