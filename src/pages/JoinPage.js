@@ -78,7 +78,7 @@ const JoinPage = () => {
   };
 
   return (
-    <div className="container">
+    <div className="join-container">
       <div id="joinDiv">
         <form onSubmit={handleJoinParty}>
           <span id="inner-title">JOIN PARTY</span><br />
