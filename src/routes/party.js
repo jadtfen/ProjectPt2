@@ -110,23 +110,29 @@ router.post('/create', async (req, res) => {
 router.post('/joinParty', async (req, res) => {
   const { partyInviteCode, userID } = req.body;
 
+  console.log('Received joinParty request:', req.body);
+
   try {
     const user = await User.findById(userID);
     if (!user) {
+      console.log('User not found for ID:', userID);
       return res.status(400).json({ message: 'User not found' });
     }
 
     if (!user.isEmailVerified) {
+      console.log('User email not verified for ID:', userID);
       return res.status(400).json({ message: 'Please verify your email first' });
     }
 
     const party = await Party.findOne({ partyInviteCode });
     if (!party) {
+      console.log('Party not found for invite code:', partyInviteCode);
       return res.status(400).json({ message: 'Party not found' });
     }
 
     const isAlreadyInParty = party.members.includes(userID);
     if (isAlreadyInParty) {
+      console.log('User already in party:', userID);
       return res.status(200).json({ userAlreadyInParty: true, partyID: party._id });
     }
 
@@ -140,12 +146,14 @@ router.post('/joinParty', async (req, res) => {
 
     await newMember.save();
 
+    console.log('User successfully joined party:', userID);
     res.status(200).json({ userAlreadyInParty: false, partyID: party._id });
   } catch (err) {
     console.error('Error joining party:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 
 // Home Endpoint

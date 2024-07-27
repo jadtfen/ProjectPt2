@@ -61,6 +61,7 @@ const JoinPage = () => {
       if (response.status === 200) {
         if (result.userAlreadyInParty) {
           console.log('User already in party.');
+          setMessage('User already in party.');
         } else {
           console.log('Successfully joined the party! Party ID:', result.partyID);
           setMessage(`Successfully joined the party! Party ID: ${result.partyID}`);
